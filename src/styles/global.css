@@ -1,0 +1,1168 @@
+/* Base document + semantic component classes.
+ *
+ * These are wrapped in Tailwind's cascade layers on purpose. Tailwind v4 emits
+ * its utilities into `@layer utilities`, and UNLAYERED css always beats a
+ * layered rule regardless of specificity, so an unlayered `.pxo-card { border }`
+ * would silently defeat every `border-*` utility applied alongside it. Putting
+ * component rules in `@layer components` restores the expected precedence:
+ * utilities override components, which override base.
+ */
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    /* Entrance animations that come in from the side sit briefly outside the
+       content box. Clip rather than hide: clip does not create a scroll
+       container, so position: sticky keeps working. */
+    overflow-x: clip;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+}
+
+@layer components {
+  /* Numerals -------------------------------------------------------------- */
+  /* Prices, floors, amounts and addresses are always monospace and tabular so
+     figures line up column-to-column and don't jitter as they update. */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.01em;
+  }
+
+  /* Buttons --------------------------------------------------------------- */
+  .pxo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.875rem;
+    padding-inline: 1.375rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      background-color 0.22s var(--ease-out-soft),
+      border-color 0.22s var(--ease-out-soft),
+      color 0.22s var(--ease-out-soft),
+      transform 0.22s var(--ease-out-soft);
+  }
+
+  .pxo-button:active {
+    transform: translateY(1px);
+  }
+
+  .pxo-button[disabled],
+  .pxo-button[aria-disabled="true"] {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .pxo-button-primary {
+    background: var(--color-ink);
+    color: var(--color-on-accent);
+  }
+
+  .pxo-button-primary:hover {
+    background: var(--color-ink-soft);
+  }
+
+  .pxo-button-secondary {
+    background: var(--color-glass);
+    color: var(--color-ink);
+    border-color: var(--color-line-strong);
+    backdrop-filter: blur(var(--blur-glass));
+  }
+
+  .pxo-button-secondary:hover {
+    background: var(--color-glass-hover);
+    border-color: var(--color-ink);
+  }
+
+  .pxo-button-ghost {
+    background: transparent;
+    color: var(--color-muted);
+    height: 2.25rem;
+    padding-inline: 0.875rem;
+  }
+
+  .pxo-button-ghost:hover {
+    color: var(--color-ink);
+  }
+
+  .pxo-button-small {
+    height: 2.25rem;
+    padding-inline: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .pxo-button-arrow {
+    display: inline-flex;
+    transition: transform 0.28s var(--ease-out-soft);
+  }
+
+  .pxo-button:hover .pxo-button-arrow {
+    transform: translate(2px, -2px);
+  }
+
+  /* Eyebrow --------------------------------------------------------------- */
+  .pxo-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4375rem 0.875rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    font-size: var(--text-eyebrow);
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+
+  /* Headings -------------------------------------------------------------- */
+  .pxo-display {
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .pxo-display-line {
+    display: block;
+  }
+
+  .pxo-display-quiet {
+    color: var(--color-faint);
+  }
+
+  .pxo-title {
+    font-size: var(--text-title);
+    line-height: var(--text-title--line-height);
+    letter-spacing: var(--text-title--letter-spacing);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .pxo-lead {
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  /* Cards ----------------------------------------------------------------- */
+  .pxo-card {
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-line);
+    background: var(--color-glass-strong);
+    backdrop-filter: blur(var(--blur-glass));
+  }
+
+  /* Guard state chips ----------------------------------------------------- */
+  .pxo-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .pxo-state::before {
+    content: "";
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  .pxo-state-armed {
+    color: var(--color-armed);
+    background: var(--color-armed-soft);
+  }
+
+  .pxo-state-armed::before {
+    animation: pxo-pulse 2.4s var(--ease-out-soft) infinite;
+  }
+
+  .pxo-state-triggered {
+    color: var(--color-triggered);
+    background: var(--color-triggered-soft);
+  }
+
+  .pxo-state-expired {
+    color: var(--color-expired);
+    background: var(--color-expired-soft);
+  }
+
+
+  /* Fields ---------------------------------------------------------------- */
+  .pxo-field {
+    width: 100%;
+    height: 3rem;
+    padding-inline: 0.875rem;
+    border-radius: var(--radius-field);
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-glass-strong);
+    color: var(--color-ink);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s var(--ease-out-soft);
+  }
+
+  .pxo-field:focus {
+    outline: none;
+    border-color: var(--color-ink);
+  }
+
+  .pxo-field-label {
+    display: block;
+    margin-bottom: 0.4375rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+
+  .pxo-field-hint {
+    margin-top: 0.4375rem;
+    font-size: 0.75rem;
+    color: var(--color-faint);
+  }
+
+  /* Site chrome ----------------------------------------------------------- */
+  .pxo-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.125rem clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .pxo-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-decoration: none;
+    color: var(--color-ink);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+  }
+
+    /* Interactive lift ---------------------------------------------------- */
+  /* Cards respond to the pointer so the page keeps moving once the entrance
+     animations have finished and the reader is just looking around. */
+  .pxo-card-lift {
+    transition:
+      transform 0.45s var(--ease-out-soft),
+      box-shadow 0.45s var(--ease-out-soft),
+      border-color 0.45s var(--ease-out-soft);
+  }
+
+  .pxo-card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 44px -28px rgb(13 15 18 / 0.4);
+    border-color: var(--color-line-strong);
+  }
+
+  /* Steps tint toward the guard colour as the pointer crosses them. */
+  .pxo-step {
+    transition:
+      background-color 0.4s var(--ease-out-soft),
+      transform 0.4s var(--ease-out-soft);
+  }
+
+  .pxo-step:hover {
+    background: var(--color-paper-soft);
+  }
+
+  .pxo-step:hover .num {
+    color: var(--color-armed);
+  }
+
+  .pxo-step .num {
+    transition: color 0.4s var(--ease-out-soft);
+  }
+
+  .pxo-token {
+    transition:
+      background-color 0.35s var(--ease-out-soft),
+      transform 0.35s var(--ease-out-soft);
+  }
+
+  .pxo-token:hover {
+    background: var(--color-paper-soft);
+    transform: translateY(-2px);
+  }
+
+  /* Scroll cue ---------------------------------------------------------- */
+  .pxo-scroll-cue::after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 1.75rem;
+    margin: 0.5rem auto 0;
+    background: linear-gradient(to bottom, var(--color-faint), transparent);
+    animation: pxo-cue 2.6s var(--ease-out-soft) infinite;
+    transform-origin: top;
+  }
+
+    /* Pointer glow --------------------------------------------------------- */
+  /* A highlight that tracks the cursor across a card. Coordinates are written
+     by lib/pointer-glow; the paint happens entirely here. */
+  .pxo-glow {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .pxo-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out-soft);
+    background: radial-gradient(
+      300px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      rgb(15 107 82 / 0.09),
+      transparent 68%
+    );
+  }
+
+  .pxo-glow[data-glow="on"]::before {
+    opacity: 1;
+  }
+
+  /* Contract address ----------------------------------------------------- */
+  .pxo-pending {
+    color: var(--color-faint);
+    letter-spacing: 0.02em;
+  }
+
+  .pxo-copy-icon {
+    display: inline-flex;
+    transition: transform 0.3s var(--ease-out-soft);
+  }
+
+  .pxo-button:hover .pxo-copy-icon {
+    transform: translateY(-1px);
+  }
+
+  /* Progress rail -------------------------------------------------------- */
+  .pxo-rail {
+    position: fixed;
+    right: clamp(1rem, 2.2vw, 2rem);
+    top: 50%;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    transform: translateY(-50%);
+  }
+
+  .pxo-rail-track {
+    position: relative;
+    display: block;
+    width: 1px;
+    height: 34vh;
+    background: var(--color-line-strong);
+  }
+
+  .pxo-rail-fill {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform-origin: top;
+    transform: scaleY(0);
+    background: var(--color-ink);
+  }
+
+  .pxo-rail-stops {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 34vh;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pxo-rail-dot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    height: 100%;
+    text-decoration: none;
+  }
+
+  .pxo-rail-dot::after {
+    content: "";
+    width: 0.3125rem;
+    height: 0.3125rem;
+    border-radius: 999px;
+    background: var(--color-line-strong);
+    transition:
+      background-color 0.35s var(--ease-out-soft),
+      transform 0.35s var(--ease-out-soft);
+  }
+
+  .pxo-rail-dot[data-passed]::after {
+    background: var(--color-faint);
+  }
+
+  .pxo-rail-dot[data-active]::after {
+    background: var(--color-armed);
+    transform: scale(1.7);
+  }
+
+  /* Labels stay hidden until the rail is hovered. Shown permanently they
+     reach back over the content column on narrower desktops. */
+  .pxo-rail-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    background: var(--color-glass-strong);
+    backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 0.1875rem 0.5rem;
+    opacity: 0;
+    transform: translateX(6px);
+    transition:
+      opacity 0.3s var(--ease-out-soft),
+      transform 0.3s var(--ease-out-soft),
+      color 0.3s var(--ease-out-soft);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .pxo-rail:hover .pxo-rail-label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .pxo-rail-dot[data-active] .pxo-rail-label {
+    color: var(--color-armed);
+  }
+
+    /* Frame around the large section visuals. */
+  .pxo-visual {
+    position: relative;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-line);
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    padding: clamp(1rem, 3vw, 2.25rem);
+    overflow: hidden;
+  }
+
+  /* Section visuals ------------------------------------------------------ */
+  .pxo-chart-tag,
+  .pxo-net-label,
+  .pxo-net-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    fill: var(--color-faint);
+  }
+
+  .pxo-chart-tag-armed {
+    fill: var(--color-armed);
+  }
+
+  .pxo-chart-tag-danger {
+    fill: var(--color-danger);
+  }
+
+  .pxo-net-label,
+  .pxo-net-value {
+    text-anchor: middle;
+  }
+
+  .pxo-net-label {
+    fill: var(--color-muted);
+  }
+
+  .pxo-net-value {
+    fill: var(--color-armed);
+    font-size: 12px;
+  }
+
+  /* Guarded path draws itself, then holds before repeating. */
+  .pxo-chart-path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: pxo-draw 9s var(--ease-out-soft) infinite;
+  }
+
+  .pxo-chart-unguarded {
+    opacity: 0;
+    animation: pxo-chart-ghost 9s var(--ease-out-soft) infinite;
+  }
+
+  .pxo-chart-floor {
+    animation: pxo-chart-floor 9s linear infinite;
+  }
+
+  .pxo-chart-marker {
+    opacity: 0;
+    animation: pxo-chart-marker 9s var(--ease-out-soft) infinite;
+  }
+
+  .pxo-chart-ping {
+    transform-origin: 604px 268px;
+    animation: pxo-ping 9s var(--ease-out-soft) infinite;
+  }
+
+  @keyframes pxo-draw {
+    0% {
+      stroke-dashoffset: 1;
+    }
+    42% {
+      stroke-dashoffset: 0;
+    }
+    92% {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes pxo-chart-ghost {
+    0%,
+    40% {
+      opacity: 0;
+    }
+    52%,
+    92% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes pxo-chart-floor {
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  @keyframes pxo-chart-marker {
+    0% {
+      opacity: 0;
+    }
+    6%,
+    92% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes pxo-ping {
+    0%,
+    28% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    34% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    46% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+
+  /* Keeper network -------------------------------------------------------- */
+  .pxo-net-pulse {
+    /* Hidden until this pulse's delay elapses. Without both of these the dot
+       sits visible on its keeper during the delay, and every node reads as a
+       filled marker instead of an empty one. */
+    opacity: 0;
+    animation: pxo-net-pulse 3.4s var(--ease-out-soft) infinite;
+    animation-fill-mode: both;
+  }
+
+  .pxo-net-node {
+    animation: pxo-net-node 3.4s var(--ease-out-soft) infinite;
+  }
+
+  .pxo-net-ring {
+    transform-origin: 440px 186px;
+    animation: pxo-net-ring 3.4s var(--ease-out-soft) infinite;
+  }
+
+  @keyframes pxo-net-pulse {
+    0% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    52% {
+      transform: translate(var(--dx), var(--dy));
+      opacity: 0;
+    }
+    100% {
+      transform: translate(var(--dx), var(--dy));
+      opacity: 0;
+    }
+  }
+
+  @keyframes pxo-net-node {
+    0%,
+    100% {
+      stroke: var(--color-faint);
+    }
+    6% {
+      stroke: var(--color-armed);
+    }
+    30% {
+      stroke: var(--color-faint);
+    }
+  }
+
+  @keyframes pxo-net-ring {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.25;
+    }
+    54% {
+      transform: scale(1.12);
+      opacity: 0.7;
+    }
+    70% {
+      transform: scale(1);
+      opacity: 0.25;
+    }
+  }
+
+  /* Motion here is decorative; stop it outright when asked to. */
+  @media (prefers-reduced-motion: reduce) {
+    .pxo-chart-path,
+    .pxo-chart-unguarded,
+    .pxo-chart-floor,
+    .pxo-chart-marker,
+    .pxo-chart-ping,
+    .pxo-net-pulse,
+    .pxo-net-node,
+    .pxo-net-ring {
+      animation: none;
+    }
+    .pxo-chart-path {
+      stroke-dashoffset: 0;
+    }
+    .pxo-chart-unguarded {
+      opacity: 0.5;
+    }
+    .pxo-chart-marker {
+      opacity: 1;
+    }
+    .pxo-net-pulse {
+      opacity: 0;
+    }
+  }
+
+  /* Marks a value the product does not know yet, rather than inventing one. */
+  /* Documentation --------------------------------------------------------- */
+  /* Three columns on a wide screen: contents, article, and the current page's
+     own headings. Both rails are sticky and independently scrollable, so a long
+     article never drags the navigation off screen. */
+  .pxo-docs {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0 3rem;
+    max-width: 88rem;
+    margin: 0 auto;
+    padding: 6.5rem clamp(1.25rem, 4vw, 2.5rem) 6rem;
+  }
+
+  @media (min-width: 60rem) {
+    .pxo-docs {
+      grid-template-columns: 15rem minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 84rem) {
+    .pxo-docs {
+      grid-template-columns: 15rem minmax(0, 1fr) 14rem;
+    }
+  }
+
+  /* Contents rail --------------------------------------------------------- */
+  .pxo-docs-nav {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 1rem;
+  }
+
+  .pxo-docs-nav-toggle {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: none;
+    border: 0;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .pxo-docs-nav-toggle span:last-child {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .pxo-docs-nav-body {
+    display: none;
+    padding-top: 0.75rem;
+  }
+
+  .pxo-docs-nav.is-open .pxo-docs-nav-body {
+    display: block;
+  }
+
+  @media (min-width: 60rem) {
+    .pxo-docs-nav {
+      position: sticky;
+      top: 5.5rem;
+      align-self: start;
+      max-height: calc(100svh - 7rem);
+      overflow-y: auto;
+      margin-bottom: 0;
+      border-bottom: 0;
+      padding-bottom: 2rem;
+      /* The scrollbar is a distraction next to body text and the rail is short
+         enough to reach by scrolling the page. */
+      scrollbar-width: none;
+    }
+
+    .pxo-docs-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pxo-docs-nav-toggle {
+      display: none;
+    }
+
+    .pxo-docs-nav-body {
+      display: block;
+      padding-top: 0;
+    }
+  }
+
+  .pxo-docs-group + .pxo-docs-group {
+    margin-top: 1.75rem;
+  }
+
+  .pxo-docs-group-label {
+    margin: 0 0 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+
+  .pxo-docs-group ul,
+  .pxo-docs-toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pxo-docs-group a {
+    display: block;
+    padding: 0.3125rem 0 0.3125rem 0.75rem;
+    margin-left: -0.0625rem;
+    border-left: 1px solid var(--color-line);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition:
+      color 0.18s var(--ease-out-soft),
+      border-color 0.18s var(--ease-out-soft);
+  }
+
+  .pxo-docs-group a:hover {
+    color: var(--color-ink);
+    border-left-color: var(--color-line-strong);
+  }
+
+  .pxo-docs-group a.is-current {
+    color: var(--color-ink);
+    font-weight: 500;
+    border-left-color: var(--color-ink);
+  }
+
+  /* On this page ---------------------------------------------------------- */
+  .pxo-docs-toc {
+    display: none;
+  }
+
+  @media (min-width: 84rem) {
+    .pxo-docs-toc {
+      display: block;
+      position: sticky;
+      top: 5.5rem;
+      align-self: start;
+      max-height: calc(100svh - 7rem);
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .pxo-docs-toc::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .pxo-docs-toc a {
+    display: block;
+    padding: 0.25rem 0;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--color-faint);
+    text-decoration: none;
+    transition: color 0.18s var(--ease-out-soft);
+  }
+
+  .pxo-docs-toc li[data-level="3"] a {
+    padding-left: 0.875rem;
+  }
+
+  .pxo-docs-toc a:hover {
+    color: var(--color-ink-soft);
+  }
+
+  .pxo-docs-toc a.is-current {
+    color: var(--color-ink);
+  }
+
+  /* Article --------------------------------------------------------------- */
+  .pxo-docs-main {
+    min-width: 0;
+  }
+
+  .pxo-docs-head {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .pxo-docs-head h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.875rem);
+    line-height: 1.06;
+    letter-spacing: -0.028em;
+    font-weight: 500;
+  }
+
+  .pxo-docs-head .pxo-lead {
+    margin: 0.75rem 0 0;
+    max-width: 54ch;
+  }
+
+  /* Rendered markdown ----------------------------------------------------- */
+  .pxo-prose {
+    max-width: 46rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+  }
+
+  .pxo-prose > *:first-child {
+    margin-top: 0;
+  }
+
+  .pxo-prose h2,
+  .pxo-prose h3 {
+    color: var(--color-ink);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    /* Anchored headings would otherwise land under the fixed header. */
+    scroll-margin-top: 6rem;
+  }
+
+  .pxo-prose h2 {
+    margin: 3rem 0 1rem;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .pxo-prose h3 {
+    margin: 2.25rem 0 0.75rem;
+    font-size: 1.125rem;
+    line-height: 1.35;
+  }
+
+  .pxo-prose p {
+    margin: 0 0 1.125rem;
+  }
+
+  .pxo-prose strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .pxo-prose a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.18s var(--ease-out-soft);
+  }
+
+  .pxo-prose a:hover {
+    text-decoration-color: var(--color-ink);
+  }
+
+  .pxo-prose ul,
+  .pxo-prose ol {
+    margin: 0 0 1.125rem;
+    padding-left: 1.25rem;
+  }
+
+  .pxo-prose li {
+    margin-bottom: 0.4375rem;
+  }
+
+  .pxo-prose li::marker {
+    color: var(--color-faint);
+  }
+
+  .pxo-prose code {
+    font-family: var(--font-mono);
+    font-size: 0.8125em;
+    background: var(--color-paper-sunk);
+    border-radius: 0.25rem;
+    padding: 0.125em 0.375em;
+    color: var(--color-ink);
+  }
+
+  .pxo-prose pre {
+    margin: 0 0 1.5rem;
+    padding: 1.125rem 1.25rem;
+    background: var(--color-ink);
+    border-radius: var(--radius-field);
+    overflow-x: auto;
+  }
+
+  .pxo-prose pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: #e6e8ec;
+  }
+
+  .pxo-prose blockquote {
+    margin: 0 0 1.5rem;
+    padding: 0.125rem 0 0.125rem 1.125rem;
+    border-left: 2px solid var(--color-line-strong);
+    color: var(--color-muted);
+  }
+
+  .pxo-prose blockquote p {
+    margin: 0;
+  }
+
+  .pxo-prose hr {
+    margin: 2.5rem 0;
+    border: 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* Tables carry most of the reference material, so they get their own scroll
+     container rather than being allowed to widen the page. */
+  .pxo-table-wrap {
+    margin: 0 0 1.5rem;
+    overflow-x: auto;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-field);
+  }
+
+  .pxo-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .pxo-prose th,
+  .pxo-prose td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.6875rem 0.9375rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .pxo-prose thead th {
+    font-weight: 500;
+    color: var(--color-ink);
+    background: var(--color-paper-soft);
+    white-space: nowrap;
+  }
+
+  .pxo-prose tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .pxo-prose td code {
+    white-space: nowrap;
+  }
+
+  /* Previous and next ----------------------------------------------------- */
+  .pxo-docs-pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 46rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .pxo-docs-pager-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.9375rem 1.125rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-field);
+    text-decoration: none;
+    transition:
+      border-color 0.18s var(--ease-out-soft),
+      background 0.18s var(--ease-out-soft);
+  }
+
+  .pxo-docs-pager-link:hover {
+    border-color: var(--color-line-strong);
+    background: var(--color-paper-soft);
+  }
+
+  .pxo-docs-pager-link.is-next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .pxo-docs-pager-link span {
+    font-size: 0.6875rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+
+  .pxo-docs-pager-link strong {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .pxo-todo {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-faint);
+    border: 1px dashed var(--color-line-strong);
+    border-radius: 0.375rem;
+    padding: 0.125rem 0.4375rem;
+  }
+}
+
+@keyframes pxo-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes pxo-cue {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  40% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1) translateY(0.75rem);
+    opacity: 0;
+  }
+}

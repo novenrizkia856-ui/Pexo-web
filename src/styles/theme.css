@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/*
+ * PEXO design tokens.
+ *
+ * Colour is deliberately scarce. The base is a neutral graphite scale; hue is
+ * reserved almost entirely for guard state, so a colour on screen always means
+ * something. This is the main visual departure from the reference codebase,
+ * which used a single brand blue decoratively throughout.
+ */
+@theme {
+  /* Surface + ink ------------------------------------------------------- */
+  --color-paper: #fbfbfc;
+  --color-paper-soft: #f4f5f7;
+  --color-paper-sunk: #eef0f3;
+  --color-ink: #0d0f12;
+  --color-ink-soft: #2b3038;
+  --color-muted: #666e7a;
+  --color-faint: #98a0ac;
+  --color-on-accent: #ffffff;
+
+  /* Hairlines ----------------------------------------------------------- */
+  --color-line: #0d0f1214;
+  --color-line-strong: #0d0f1229;
+
+  /* Glass --------------------------------------------------------------- */
+  --color-glass: #ffffffbf;
+  --color-glass-strong: #ffffffe6;
+  --color-glass-hover: #ffffff;
+
+  /* Guard state — the only load-bearing colour in the system ------------ */
+  --color-armed: #0f6b52;
+  --color-armed-soft: #0f6b521a;
+  --color-triggered: #a8530b;
+  --color-triggered-soft: #a8530b1a;
+  --color-expired: #6b7280;
+  --color-expired-soft: #6b72801a;
+  --color-danger: #a8201a;
+
+  /* Type ---------------------------------------------------------------- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --text-display: clamp(2.75rem, 7vw, 5.5rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.035em;
+
+  --text-title: clamp(2rem, 4.4vw, 3.5rem);
+  --text-title--line-height: 1.04;
+  --text-title--letter-spacing: -0.028em;
+
+  --text-lead: clamp(1rem, 1.35vw, 1.1875rem);
+  --text-lead--line-height: 1.55;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--letter-spacing: 0.09em;
+
+  /* Geometry ------------------------------------------------------------ */
+  --radius-card: 1.125rem;
+  --radius-field: 0.625rem;
+
+  --blur-glass: 18px;
+
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Measure ------------------------------------------------------------- */
+  --spacing-title: 18ch;
+  --spacing-lead: 46ch;
+}

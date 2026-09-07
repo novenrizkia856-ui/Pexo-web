@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Pexo, set your floor</title>
+    <meta
+      name="description"
+      content="Noncustodial downside floors for tokenized stocks. Set a floor price and an expiry. If price reaches it, your position settles automatically, never below."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pexo, set your floor" />
+    <meta
+      property="og:description"
+      content="Noncustodial downside floors for tokenized stocks on Robinhood Chain."
+    />
+    <!--
+      og:image must be an absolute URL: crawlers do not resolve relative paths.
+      Set VITE_SITE_URL at build time to the deployed origin. Without it the tag
+      is omitted entirely and the card degrades to a text summary, which is
+      correct behaviour rather than a broken image.
+    -->
+    %OG_IMAGE%
+    <meta name="twitter:card" content="%TWITTER_CARD%" />
+    <meta name="twitter:title" content="Pexo, set your floor" />
+    <meta
+      name="twitter:description"
+      content="Noncustodial downside floors for tokenized stocks on Robinhood Chain."
+    />
+
+    <link rel="icon" href="/pexo-mark.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

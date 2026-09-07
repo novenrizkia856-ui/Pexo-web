@@ -1,0 +1,9 @@
+# GitBook git sync configuration.
+#
+# The docs live at the root of whatever repository they are pushed to, so the
+# defaults are stated explicitly rather than left implicit.
+root: ./
+
+structure:
+  readme: README.md
+  summary: SUMMARY.md
