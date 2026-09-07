@@ -1,6 +1,7 @@
 import { animated, useSpring } from "@react-spring/web";
 import { landing } from "@/content/landing";
 import { Button } from "@/components/ui";
+import { ContractAddress } from "@/components/contract-address";
 import { LineReveal, Reveal } from "@/components/motion";
 import { useExperience } from "@/state/experience";
 
@@ -32,9 +33,17 @@ export function HeroSection() {
         {hero.subtitle}
       </Reveal>
 
+      {/*
+        The address sits above the call to action, not beside it: it is
+        reference material people come to copy, not a second thing to click.
+      */}
+      <Reveal kind="settle" delay={600} className="mb-5 w-full max-w-[34rem]">
+        <ContractAddress />
+      </Reveal>
+
       <Reveal
         kind="scale"
-        delay={640}
+        delay={720}
         className="flex gap-3 max-sm:w-full max-sm:max-w-72 max-sm:flex-col"
       >
         {hero.buttons.map((button) => (

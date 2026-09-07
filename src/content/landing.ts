@@ -16,7 +16,6 @@ export const landing = {
       "Tokenized stocks trade around the clock. The market behind them does not. Name the price you want out at and the least you will accept, then walk away.",
     buttons: [
       { label: "Create a guard", href: "/app", variant: "primary" as const, withArrow: true },
-      { label: "How it works", href: "#how", variant: "secondary" as const },
     ],
     scrollCue: "Scroll",
   },
@@ -101,10 +100,8 @@ export const landing = {
    * are unrelated systems and the copy must not imply otherwise.
    */
   ca: {
-    eyebrow: "Token",
-    titleLines: ["Contract address."],
-    lead: "The Pexo token is separate from the guard protocol. The guard system does not read, hold, or settle it.",
     label: "PEXO token",
+    note: "Separate from the guard protocol. The guard system does not read, hold, or settle it.",
     pending: "Coming soon",
     pendingNote: "Published here the moment it deploys.",
     copyLabel: "Copy contract address",

@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 // Must stay in the order the sections appear in `LandingRoute`: the rail marks
 // progress down the page, so a stop out of sequence lights up out of turn.
 const STOPS = [
-  { id: "contract", label: "Token" },
   { id: "problem", label: "The gap" },
   { id: "how", label: "How it works" },
   { id: "guarantees", label: "Guarantees" },

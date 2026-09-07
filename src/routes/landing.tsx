@@ -8,14 +8,13 @@ import { ProblemSection } from "@/sections/problem-section";
 import { HowSection } from "@/sections/how-section";
 import { GuaranteesSection } from "@/sections/guarantees-section";
 import { AssetsSection } from "@/sections/assets-section";
-import { CaSection } from "@/sections/ca-section";
 import { KeeperSection } from "@/sections/keeper-section";
 import { SiteFooter } from "@/sections/site-footer";
 
-// three.js is ~600kB and is only ever used by the landing backdrop. Splitting it
-// out keeps it off the app route entirely, and off the critical path here.
-const FloorField = lazy(() =>
-  import("@/components/floor-field").then((m) => ({ default: m.FloorField })),
+// The backdrop is canvas 2D and costs a few kB, but it is still only ever used
+// here, so it stays split out and off the app route.
+const PriceField = lazy(() =>
+  import("@/components/price-field").then((m) => ({ default: m.PriceField })),
 );
 
 export function LandingRoute() {
@@ -25,17 +24,12 @@ export function LandingRoute() {
     <>
       <ScrollTracker />
       <Suspense fallback={null}>
-        <FloorField />
+        <PriceField />
       </Suspense>
       <SiteHeader />
       <ScrollRail />
       <main>
         <HeroSection />
-        {/*
-          The token section sits directly under the hero so the address is the
-          first thing after the pitch, rather than something to scroll for.
-        */}
-        <CaSection />
         <ProblemSection />
         <HowSection />
         <GuaranteesSection />

@@ -1,8 +1,18 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { PEXO_CONFIG, shortAddress } from "@/config/pexo.config";
 import { landing } from "@/content/landing";
-import { Eyebrow, Section } from "@/components/ui";
-import { DrawLine, LineReveal, Reveal } from "@/components/motion";
+
+/**
+ * The Pexo token address, as a single inline row.
+ *
+ * Lives in the hero because the address is the thing people arrive looking for,
+ * and asking them to scroll for it loses most of them. It is the only place the
+ * address appears, so there is no second copy to keep in step.
+ *
+ * The token is NOT part of the guard protocol. That distinction is stated here
+ * rather than left to the reader, because an address on a DeFi landing page is
+ * otherwise assumed to be the thing the product runs on.
+ */
 
 function CopyIcon({ className = "size-4" }: { className?: string }) {
   return (
@@ -59,15 +69,7 @@ function useNarrow(query = "(max-width: 767px)") {
   );
 }
 
-/**
- * The Pexo token contract address.
- *
- * The token does not exist yet, so this publishes a "Coming soon" state rather
- * than a zero address dressed up as a deployment. The copy control is rendered
- * either way so the layout does not shift once an address lands, but it stays
- * inert while there is nothing to put on the clipboard.
- */
-export function CaSection() {
+export function ContractAddress() {
   const { ca } = landing;
   const address = PEXO_CONFIG.token.address;
   const [copied, setCopied] = useState(false);
@@ -87,10 +89,7 @@ export function CaSection() {
       await navigator.clipboard.writeText(address);
       setCopied(true);
       if (timer.current !== null) window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => {
-        setCopied(false);
-        timer.current = null;
-      }, 1800);
+      timer.current = window.setTimeout(() => setCopied(false), 1800);
     } catch {
       // Clipboard writes can be denied outright: an insecure context, a
       // permissions policy, or an embedded frame. Rather than fail silently,
@@ -108,63 +107,55 @@ export function CaSection() {
   }
 
   return (
-    <Section id="contract">
-      <DrawLine className="mb-16" />
+    <div className="w-full">
+      {/*
+        Tighter gaps below `sm`: at 375px the label, value and button need
+        335px against the 327px available, and the 8px shortfall lands on the
+        value, which is the one part that must stay readable.
+      */}
+      <div className="pxo-card flex w-full items-center gap-2 p-2 pl-3 text-left sm:gap-3 sm:pl-4">
+      <span className="shrink-0 text-eyebrow uppercase tracking-[0.09em] text-faint">
+        {ca.label}
+      </span>
 
-      <Reveal kind="blur" className="mb-6">
-        <Eyebrow>{ca.eyebrow}</Eyebrow>
-      </Reveal>
-      <LineReveal
-        lines={ca.titleLines}
-        className="pxo-title mb-7 max-w-title text-balance"
-        delay={80}
-      />
-      <Reveal tag="p" kind="fade" delay={280} className="pxo-lead mb-12 max-w-lead text-pretty">
-        {ca.lead}
-      </Reveal>
+      <span aria-hidden="true" className="h-5 w-px shrink-0 bg-line" />
 
-      <Reveal kind="settle" duration={760}>
-        <div className="pxo-card pxo-glow pxo-card-lift flex flex-wrap items-center justify-between gap-6 p-7 md:p-9">
-          <div className="min-w-0">
-            <span className="block text-eyebrow uppercase tracking-[0.09em] text-faint">
-              {ca.label}
-            </span>
+      {address ? (
+        <span
+          ref={addressRef}
+          className="num min-w-0 flex-1 truncate text-sm"
+          title={address}
+        >
+          {narrow ? shortAddress(address) : address}
+        </span>
+      ) : (
+        <span className="num pxo-pending min-w-0 flex-1 truncate text-sm" title={ca.pendingNote}>
+          {ca.pending}
+        </span>
+      )}
 
-            {address ? (
-              <span
-                ref={addressRef}
-                className="num mt-2 block truncate text-[clamp(1.125rem,2.4vw,1.75rem)]"
-                title={address}
-              >
-                {narrow ? shortAddress(address) : address}
-              </span>
-            ) : (
-              <span className="num pxo-pending mt-2 block text-[clamp(1.125rem,2.4vw,1.75rem)]">
-                {ca.pending}
-              </span>
-            )}
+      <button
+        type="button"
+        onClick={copy}
+        disabled={!address}
+        aria-disabled={!address}
+        aria-label={address ? ca.copyLabel : `${ca.copyLabel} (not available yet)`}
+        title={address ? ca.copyLabel : ca.pendingNote}
+        className="pxo-button pxo-button-secondary pxo-button-small shrink-0"
+      >
+        <span className="pxo-copy-icon" aria-hidden="true">
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </span>
+        <span>{copied ? ca.copiedLabel : "Copy"}</span>
+      </button>
+      </div>
 
-            {!address ? (
-              <span className="mt-2 block text-xs text-faint">{ca.pendingNote}</span>
-            ) : null}
-          </div>
-
-          <button
-            type="button"
-            onClick={copy}
-            disabled={!address}
-            aria-disabled={!address}
-            aria-label={address ? ca.copyLabel : `${ca.copyLabel} (not available yet)`}
-            title={address ? ca.copyLabel : ca.pendingNote}
-            className="pxo-button pxo-button-secondary shrink-0"
-          >
-            <span className="pxo-copy-icon" aria-hidden="true">
-              {copied ? <CheckIcon /> : <CopyIcon />}
-            </span>
-            <span>{copied ? ca.copiedLabel : "Copy"}</span>
-          </button>
-        </div>
-      </Reveal>
-    </Section>
+      {/*
+        Carried over from the section this replaced. An address on a DeFi
+        landing page is assumed to be what the product runs on, and here it is
+        not, so the line stays with the address rather than being dropped.
+      */}
+      <p className="mt-2 text-center text-xs text-faint">{ca.note}</p>
+    </div>
   );
 }
