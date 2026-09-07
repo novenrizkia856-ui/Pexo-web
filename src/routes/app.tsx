@@ -22,6 +22,7 @@ export function AppRoute() {
     connected,
     account,
     walletAvailable,
+    walletConnectAvailable,
     guards,
     loadingGuards,
     status,
@@ -135,14 +136,38 @@ export function AppRoute() {
                 </Button>
               </>
             ) : (
-              <Button
-                variant="secondary"
-                small
-                disabled={busy || !walletAvailable}
-                onClick={() => void connect()}
-              >
-                {busy ? "Connecting…" : walletAvailable ? "Connect wallet" : "No wallet found"}
-              </Button>
+              <>
+                {walletAvailable ? (
+                  <Button
+                    variant="secondary"
+                    small
+                    disabled={busy}
+                    onClick={() => void connect("injected")}
+                  >
+                    {busy ? "Connecting…" : "Connect wallet"}
+                  </Button>
+                ) : null}
+                {/*
+                  With no extension present this is the only way in, so it takes
+                  the prominent style. Alongside one it stays secondary: pairing
+                  a phone is the deliberate choice, not the default.
+                */}
+                {walletConnectAvailable ? (
+                  <Button
+                    variant={walletAvailable ? "ghost" : "secondary"}
+                    small
+                    disabled={busy}
+                    onClick={() => void connect("walletconnect")}
+                  >
+                    {busy && !walletAvailable ? "Connecting…" : "WalletConnect"}
+                  </Button>
+                ) : null}
+                {!walletAvailable && !walletConnectAvailable ? (
+                  <Button variant="secondary" small disabled>
+                    No wallet found
+                  </Button>
+                ) : null}
+              </>
             )}
             <Button
               variant="primary"
@@ -186,13 +211,21 @@ export function AppRoute() {
         {!connected ? (
           <div className="pxo-card border-dashed p-12 text-center">
             <h2 className="text-base font-medium">
-              {walletAvailable ? "Connect to view your guards" : "A browser wallet is required"}
+              {walletAvailable || walletConnectAvailable
+                ? "Connect to view your guards"
+                : "A browser wallet is required"}
             </h2>
             <p className="mx-auto mt-2 max-w-[46ch] text-sm text-muted">
-              {walletAvailable
+              {walletAvailable || walletConnectAvailable
                 ? "Pexo is noncustodial. Connecting only reads your positions. It grants no access to your tokens."
                 : "Pexo talks to the contract directly from your browser. Install a wallet that supports Robinhood Chain to continue."}
             </p>
+            {!walletAvailable && walletConnectAvailable ? (
+              <p className="mx-auto mt-2 max-w-[46ch] text-sm text-muted">
+                No extension in this browser. WalletConnect pairs a wallet on
+                another device instead; scan the code with it to continue.
+              </p>
+            ) : null}
           </div>
         ) : loadingGuards && guards.length === 0 ? (
           <div className="pxo-card border-dashed p-12 text-center">

@@ -21,7 +21,15 @@ import {
   triggerGuard as triggerOnChain,
   withdrawGuard as withdrawOnChain,
 } from "@/lib/pexo-client";
-import { ensureCorrectChain, getInjectedProvider, hasWallet } from "@/lib/chain";
+import {
+  connectWallet,
+  disconnectWallet,
+  ensureCorrectChain,
+  hasWallet,
+  hasWalletConnect,
+  type ConnectorKind,
+  type Eip1193,
+} from "@/lib/chain";
 import { toTokenUnits, toUsdgUnits } from "@/lib/units";
 
 /**
@@ -43,7 +51,12 @@ type Status = "idle" | "pending" | "error";
 type ProtocolState = {
   connected: boolean;
   account: Address | null;
+  /** An injected wallet exists in this browser. */
   walletAvailable: boolean;
+  /** This build carries a WalletConnect project id, so pairing is offered. */
+  walletConnectAvailable: boolean;
+  /** How the current wallet is reached, once one is connected. */
+  connector: ConnectorKind | null;
   guards: Guard[];
   /** Exit quote per guard id, in USDG. Refreshed on demand. */
   quotes: Record<string, number>;
@@ -61,7 +74,7 @@ type ProtocolState = {
   quoteFor: (guardId: string) => number;
   slippageBps: (assetId: string, amount: number, fee: number) => number;
 
-  connect: () => Promise<void>;
+  connect: (kind?: ConnectorKind) => Promise<void>;
   disconnect: () => void;
   refresh: () => Promise<void>;
   advance: () => void;
@@ -84,10 +97,43 @@ type ProtocolState = {
 
 const settle = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Providers already subscribed to, so reconnecting does not stack listeners. */
+const watched = new WeakSet<Eip1193>();
+
+/**
+ * Follows the wallet's own view of the connection.
+ *
+ * This matters far more over WalletConnect than with an extension: the session
+ * can be ended from the phone, and without these events the app would keep
+ * showing an address it can no longer sign with.
+ */
+function watchProvider(
+  provider: Eip1193,
+  set: (partial: Partial<ProtocolState>) => void,
+  get: () => ProtocolState,
+) {
+  if (!provider.on || watched.has(provider)) return;
+  watched.add(provider);
+
+  const onAccountsChanged = (accounts: string[]) => {
+    if (!accounts?.length) {
+      get().disconnect();
+      return;
+    }
+    set({ account: accounts[0] as Address, guards: [], quotes: {}, balances: {} });
+    void get().refresh();
+  };
+
+  provider.on("accountsChanged", onAccountsChanged as (...args: never[]) => void);
+  provider.on("disconnect", (() => get().disconnect()) as (...args: never[]) => void);
+}
+
 export const useProtocol = create<ProtocolState>((set, get) => ({
   connected: false,
   account: null,
   walletAvailable: typeof window !== "undefined" ? hasWallet() : false,
+  walletConnectAvailable: hasWalletConnect(),
+  connector: null,
   guards: MOCK_MODE ? initialDemoGuards() : [],
   quotes: {},
   balances: {},
@@ -136,32 +182,50 @@ export const useProtocol = create<ProtocolState>((set, get) => ({
     }
   },
 
-  connect: async () => {
-    const provider = getInjectedProvider();
-    if (!provider) {
+  /**
+   * Connects a wallet, defaulting to whichever connector this browser can use.
+   *
+   * An extension is preferred when one is present because it needs no pairing,
+   * but the choice is always the caller's: someone with an extension installed
+   * may still want to sign from a phone.
+   */
+  connect: async (kind) => {
+    const { walletAvailable, walletConnectAvailable } = get();
+    const chosen: ConnectorKind = kind ?? (walletAvailable ? "injected" : "walletconnect");
+
+    if (chosen === "injected" && !walletAvailable) {
       set({
         error: "No wallet found. Install a browser wallet to use Pexo.",
         walletAvailable: false,
       });
       return;
     }
+    if (chosen === "walletconnect" && !walletConnectAvailable) {
+      set({ error: "WalletConnect is not configured for this build." });
+      return;
+    }
 
     set({ status: "pending", error: null });
     try {
-      const accounts = (await provider.request({
-        method: "eth_requestAccounts",
-      })) as Address[];
+      const { accounts, provider } = await connectWallet(chosen);
       if (!accounts?.length) throw new Error("No account was returned by the wallet.");
 
       await ensureCorrectChain();
-      set({ connected: true, account: accounts[0], status: "idle" });
+      set({ connected: true, account: accounts[0], connector: chosen, status: "idle" });
+      watchProvider(provider, set, get);
       await get().refresh();
     } catch (err) {
-      set({ status: "error", error: explainError(err) });
+      // The session, if one opened, is deliberately left in place. A failure
+      // here is usually a declined chain switch, and tearing the pairing down
+      // would make the user scan a fresh QR code just to try again.
+      set({ status: "error", error: explainError(err), connected: false, account: null });
     }
   },
 
-  disconnect: () => set({ connected: false, account: null, guards: [], quotes: {} }),
+  disconnect: () => {
+    void disconnectWallet();
+    set({ connected: false, account: null, connector: null, guards: [], quotes: {}, balances: {} });
+  },
 
   /** Reloads guards, their quotes and the connected wallet's balances. */
   refresh: async () => {
