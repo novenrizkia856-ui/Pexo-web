@@ -11,10 +11,10 @@ import { AssetsSection } from "@/sections/assets-section";
 import { KeeperSection } from "@/sections/keeper-section";
 import { SiteFooter } from "@/sections/site-footer";
 
-// The backdrop is canvas 2D and costs a few kB, but it is still only ever used
-// here, so it stays split out and off the app route.
-const PriceField = lazy(() =>
-  import("@/components/price-field").then((m) => ({ default: m.PriceField })),
+// three.js is ~600kB and is only ever used by the landing backdrop. Splitting it
+// out keeps it off the app route entirely, and off the critical path here.
+const FloorCorridor = lazy(() =>
+  import("@/components/floor-corridor").then((m) => ({ default: m.FloorCorridor })),
 );
 
 export function LandingRoute() {
@@ -24,7 +24,7 @@ export function LandingRoute() {
     <>
       <ScrollTracker />
       <Suspense fallback={null}>
-        <PriceField />
+        <FloorCorridor />
       </Suspense>
       <SiteHeader />
       <ScrollRail />
