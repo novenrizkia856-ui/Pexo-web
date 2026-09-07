@@ -123,7 +123,7 @@ export function CaSection() {
         {ca.lead}
       </Reveal>
 
-      <Reveal kind="scale" duration={760}>
+      <Reveal kind="settle" duration={760}>
         <div className="pxo-card pxo-glow pxo-card-lift flex flex-wrap items-center justify-between gap-6 p-7 md:p-9">
           <div className="min-w-0">
             <span className="block text-eyebrow uppercase tracking-[0.09em] text-faint">

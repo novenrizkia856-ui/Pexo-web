@@ -140,7 +140,7 @@ export function LineReveal({
 
 /* -------------------------------------------------------------------------- */
 
-type RevealStyle = "rise" | "fade" | "blur" | "scale" | "left" | "right";
+type RevealStyle = "rise" | "fade" | "blur" | "scale" | "settle" | "left" | "right";
 
 function styleFor(kind: RevealStyle, shown: boolean, distance: number): CSSProperties {
   if (shown) {
@@ -153,6 +153,18 @@ function styleFor(kind: RevealStyle, shown: boolean, distance: number): CSSPrope
       return { opacity: 0, transform: "translate3d(0,8px,0)", filter: "blur(7px)" };
     case "scale":
       return { opacity: 0, transform: "translate3d(0,10px,0) scale(0.965)", filter: "blur(0px)" };
+    /**
+     * The mirror of `scale`: comes down from above and contracts to rest,
+     * rather than rising and expanding into place.
+     *
+     * Reads as a card coming to rest on the page, which is the same gesture the
+     * backdrop makes when its points settle onto the floor line. Cards use this
+     * so the page is not one motion repeated the whole way down; `scale` is
+     * kept for the full width figures, where expanding into place suits the
+     * size.
+     */
+    case "settle":
+      return { opacity: 0, transform: "translate3d(0,-10px,0) scale(1.025)", filter: "blur(0px)" };
     case "left":
       return { opacity: 0, transform: `translate3d(${-distance}px,0,0)`, filter: "blur(0px)" };
     case "right":

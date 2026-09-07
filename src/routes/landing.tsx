@@ -31,11 +31,15 @@ export function LandingRoute() {
       <ScrollRail />
       <main>
         <HeroSection />
+        {/*
+          The token section sits directly under the hero so the address is the
+          first thing after the pitch, rather than something to scroll for.
+        */}
+        <CaSection />
         <ProblemSection />
         <HowSection />
         <GuaranteesSection />
         <AssetsSection />
-        <CaSection />
         <KeeperSection />
       </main>
       <SiteFooter />

@@ -28,7 +28,7 @@ export function AssetsSection() {
       </Reveal>
 
       {supported.length === 0 ? (
-        <Reveal kind="scale" duration={720}>
+        <Reveal kind="settle" duration={720}>
           <div className="pxo-card pxo-glow flex flex-col items-start gap-3 border-dashed p-10 md:p-14">
             <h3 className="text-base font-medium">{assets.emptyTitle}</h3>
             <p className="max-w-[56ch] text-[0.9375rem] leading-relaxed text-muted text-pretty">
@@ -39,7 +39,7 @@ export function AssetsSection() {
       ) : (
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[--radius-card] border border-line bg-line sm:grid-cols-3 lg:grid-cols-4">
           {supported.map((asset, i) => (
-            <Reveal key={asset.id} kind="scale" delay={i * 70}>
+            <Reveal key={asset.id} kind="rise" delay={i * 70}>
               <div className="pxo-token pxo-glow flex h-full items-center gap-3 bg-paper p-6">
                 {asset.logo ? (
                   <img

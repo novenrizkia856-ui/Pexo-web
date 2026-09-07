@@ -27,7 +27,7 @@ export function GuaranteesSection() {
         {guarantees.lead}
       </Reveal>
 
-      <Reveal kind="scale" duration={780}>
+      <Reveal kind="settle" duration={780}>
         <article className="pxo-card pxo-glow pxo-card-lift mb-4 border-l-2 border-l-armed p-8 md:p-12">
           <h3 className="pxo-title mb-6 max-w-[22ch] text-[clamp(1.5rem,2.6vw,2.25rem)] text-balance">
             {primary.title}

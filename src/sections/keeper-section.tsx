@@ -50,7 +50,7 @@ export function KeeperSection() {
         </div>
 
         <div className="flex flex-wrap items-end gap-4">
-          <Reveal kind="scale" delay={200}>
+          <Reveal kind="settle" delay={200}>
             <dl className="pxo-card pxo-glow pxo-card-lift flex gap-10 px-7 py-5">
               <div>
                 <dt className="text-eyebrow uppercase tracking-[0.09em] text-faint">Bounty</dt>

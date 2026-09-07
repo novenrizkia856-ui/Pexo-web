@@ -108,7 +108,7 @@ export const PEXO_CONFIG = {
         name: "Apple",
         address: "0xaF3D76f1834A1d425780943C99Ea8A608f8a93f9",
         decimals: 18,
-        logo: "",
+        logo: "/tokens/aapl.svg",
         accent: "#111111",
       },
       {
@@ -117,7 +117,7 @@ export const PEXO_CONFIG = {
         name: "Tesla",
         address: "0x322F0929c4625eD5bAd873c95208D54E1c003b2d",
         decimals: 18,
-        logo: "",
+        logo: "/tokens/tsla.svg",
         accent: "#e82127",
       },
       {
@@ -126,7 +126,7 @@ export const PEXO_CONFIG = {
         name: "NVIDIA",
         address: "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC",
         decimals: 18,
-        logo: "",
+        logo: "/tokens/nvda.svg",
         accent: "#76b900",
       },
     ] as readonly SupportedAsset[],
