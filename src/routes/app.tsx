@@ -122,7 +122,14 @@ export function AppRoute() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/*
+            Wraps because the connected state puts four things in this row —
+            address, Refresh, Disconnect, New guard — which comes to roughly
+            470px against the ~327px a 375px phone leaves after page padding.
+            Without wrapping they overflow the row rather than shrinking, since
+            the buttons size to their text.
+          */}
+          <div className="flex flex-wrap items-center gap-2">
             {connected && account ? (
               <>
                 <span className="num pxo-card px-4 py-2 text-sm" title={account}>
