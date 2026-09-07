@@ -112,7 +112,7 @@ const VERTEX = `
     // Fade in from just in front of the camera and out toward the horizon, so
     // geometry never pops at either end of the corridor.
     float near = smoothstep(uNear, uNear + 26.0, depth);
-    float far = 1.0 - smoothstep(uFar * 0.12, uFar * 0.55, depth);
+    float far = 1.0 - smoothstep(uFar * 0.16, uFar * 0.66, depth);
 
     vAlpha = aWeight * near * far;
     vOnFloor = aOnFloor;
@@ -212,7 +212,7 @@ export function FloorCorridor() {
         // Lanes near the centre line sit lower and read stronger; the outer
         // ones are faint, so the corridor has a middle rather than a wall.
         const centre = 1 - Math.abs(t - 0.5) * 2;
-        const weight = 0.1 + centre * 0.34;
+        const weight = 0.17 + centre * 0.5;
         const profile = laneProfile(samples, 0.05 + Math.random() * 0.05);
         const amp = height * (0.45 + centre * 0.55);
 
@@ -252,14 +252,14 @@ export function FloorCorridor() {
         const x = -halfWidth + r * railGap;
         gridPos.push(x, 0, 0, x, 0, -DEPTH);
         gridFloor.push(1, 1);
-        gridWeight.push(0.07, 0.07);
+        gridWeight.push(0.14, 0.14);
       }
 
       const rungGap = STEP_Z * 5;
       for (let z = 0; z <= DEPTH; z += rungGap) {
         gridPos.push(-halfWidth, 0, -z, halfWidth, 0, -z);
         gridFloor.push(1, 1);
-        gridWeight.push(0.1, 0.1);
+        gridWeight.push(0.22, 0.22);
       }
 
       const gridGeo = new THREE.BufferGeometry();
@@ -296,8 +296,8 @@ export function FloorCorridor() {
       // Descending toward the floor as the page is read.
       const camY = ramp(
         [
-          [0, 10.5],
-          [0.3, 6.2],
+          [0, 7.4],
+          [0.3, 5.2],
           [0.68, 2.1],
           [0.9, 3.4],
           [1, 5],
@@ -306,27 +306,27 @@ export function FloorCorridor() {
       );
       const speed = ramp(
         [
-          [0, 15],
-          [0.35, 26],
-          [0.7, 20],
-          [1, 13],
+          [0, 24],
+          [0.35, 36],
+          [0.7, 28],
+          [1, 19],
         ],
         eased,
       );
       uniforms.uOpacity.value = ramp(
         [
-          [0, 0.42],
-          [0.2, 0.72],
-          [0.75, 0.9],
-          [1, 0.6],
+          [0, 0.8],
+          [0.2, 1],
+          [0.75, 1],
+          [1, 0.8],
         ],
         eased,
       );
       // The floor's colour arrives with the guarantee, not before it.
       uniforms.uFloorMix.value = ramp(
         [
-          [0, 0.12],
-          [0.3, 0.55],
+          [0, 0.35],
+          [0.3, 0.7],
           [0.65, 1],
           [1, 0.9],
         ],
@@ -347,14 +347,14 @@ export function FloorCorridor() {
       // further down instead of only hugging the bottom edge.
       const maskStart = ramp(
         [
-          [0, 46],
-          [0.16, 4],
+          [0, 26],
+          [0.16, 2],
           [1, 0],
         ],
         eased,
       );
       host!.style.setProperty("--field-mask-start", maskStart + "%");
-      host!.style.setProperty("--field-mask-mid", maskStart + 24 + "%");
+      host!.style.setProperty("--field-mask-mid", maskStart + 22 + "%");
     }
 
     function loop(now: number) {
@@ -403,8 +403,8 @@ export function FloorCorridor() {
       className="pointer-events-none fixed inset-0 z-0"
       style={
         {
-          "--field-mask-start": "46%",
-          "--field-mask-mid": "70%",
+          "--field-mask-start": "26%",
+          "--field-mask-mid": "50%",
           maskImage: maskValue,
           WebkitMaskImage: maskValue,
         } as CSSProperties

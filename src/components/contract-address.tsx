@@ -107,7 +107,7 @@ export function ContractAddress() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full text-center">
       {/*
         Tighter gaps below `sm`: at 375px the label, value and button need
         335px against the 327px available, and the 8px shortfall lands on the
@@ -154,8 +154,15 @@ export function ContractAddress() {
         Carried over from the section this replaced. An address on a DeFi
         landing page is assumed to be what the product runs on, and here it is
         not, so the line stays with the address rather than being dropped.
+
+        It sits on its own paper backing because the backdrop is at its busiest
+        exactly here: a grid line running through a line of 12px grey makes it
+        unreadable. Backing the type is the fix, rather than quietening the
+        animation, which is the thing being asked for.
       */}
-      <p className="mt-2 text-center text-xs text-faint">{ca.note}</p>
+      <p className="mt-2 inline-block rounded-md bg-paper/85 px-2.5 py-1 text-xs text-muted">
+        {ca.note}
+      </p>
     </div>
   );
 }
