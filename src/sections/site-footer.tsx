@@ -47,7 +47,7 @@ export function SiteFooter() {
         <Reveal kind="left" distance={24}>
           <div className="flex flex-col items-start gap-4">
             <span className="pxo-brand">
-              <Wordmark />
+              <Wordmark className="h-7" />
             </span>
             <p className="max-w-[34ch] text-sm leading-relaxed text-muted">{footer.tagline}</p>
             <div className="mt-2 flex flex-col gap-1.5">

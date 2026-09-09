@@ -149,7 +149,7 @@ async function initWalletConnect(): Promise<SessionProvider> {
       icons:
         typeof window === "undefined"
           ? []
-          : [`${window.location.origin}/pexo-mark.svg`],
+          : [`${window.location.origin}/brand/mark.png`],
     },
   })) as unknown as SessionProvider;
 
