@@ -1,3 +1,5 @@
+import { PEXO_TOKEN_ADDRESS } from "./token-address";
+
 /**
  * PEXO — single source of truth for every on chain value.
  *
@@ -25,6 +27,29 @@ export type SupportedAsset = {
   /** Per-asset accent, used sparingly for the token mark only. */
   accent: string;
 };
+
+/**
+ * Accepts the launch address only if it is exactly `0x` plus 40 hex digits.
+ *
+ * A malformed value becomes null, so the site keeps saying "Coming soon"
+ * rather than publishing something broken: a truncated address on a launch
+ * page is worse than no address, because people act on it. In development the
+ * same mistake throws, so a bad paste is caught while editing instead of being
+ * discovered by whoever copies it.
+ */
+function resolveTokenAddress(value: string | null): `0x${string}` | null {
+  if (value === null) return null;
+
+  const trimmed = value.trim();
+  if (!/^0x[0-9a-fA-F]{40}$/.test(trimmed)) {
+    const message = `PEXO_TOKEN_ADDRESS is not a valid address: ${JSON.stringify(value)}`;
+    if (import.meta.env.DEV) throw new Error(message);
+    console.error(message);
+    return null;
+  }
+
+  return trimmed as `0x${string}`;
+}
 
 export const PEXO_CONFIG = {
   chain: {
@@ -141,8 +166,11 @@ export const PEXO_CONFIG = {
    */
   token: {
     symbol: "PEXO",
-    /** TODO: no token deployed. While this is null the UI shows "Coming soon". */
-    address: null as `0x${string}` | null,
+    /**
+     * Set at launch by editing `src/config/token-address.ts`, nothing here.
+     * Validated on the way in, so this is either a well formed address or null.
+     */
+    address: resolveTokenAddress(PEXO_TOKEN_ADDRESS),
   },
 
   protocol: {

@@ -114,9 +114,11 @@ store. No component needs to change.
 The token is **not part of the protocol**: the guard system does not read,
 hold, or settle it, and no app logic depends on it.
 
-While `token.address` is `null`, the landing page publishes a "Coming soon"
-state and the copy control renders but stays inert. Set the address and the
-section starts showing it, with a working copy button. Nothing else changes.
+The address itself lives in [`src/config/token-address.ts`](src/config/token-address.ts),
+alone, so publishing it at launch is a one line diff. While it is `null` the
+hero row publishes a "Coming soon" state and the copy control renders but stays
+inert. Set it and the same row shows the address, enables copy, and links it to
+the explorer. Nothing else changes.
 
 ### Before deploying this frontend
 
@@ -127,6 +129,14 @@ section starts showing it, with a working copy button. Nothing else changes.
       is better.
 - [ ] Fill the `TODO_*_URL` links in `src/content/landing.ts`, or accept that
       they render as visibly disabled.
+
+**Publishing the token address** is one line, on purpose: set
+`PEXO_TOKEN_ADDRESS` in [`src/config/token-address.ts`](src/config/token-address.ts),
+commit, push. The hero switches from "Coming soon" to the address, enables the
+copy button, and links it to the explorer. Nothing else is edited. Paste the
+mixed case form the explorer shows; anything that is not `0x` plus 40 hex
+characters is refused, loudly in development and by staying on "Coming soon" in
+production, rather than published broken.
 
 ### Deploying
 
@@ -184,5 +194,6 @@ without either. See [Deploying](#deploying) above for what each one enables.
   into `@layer utilities`, and unlayered CSS beats any layered rule regardless
   of specificity — so unlayered component classes would silently defeat every
   utility applied alongside them.
-#   P e x o - w e b  
+#   P e x o - w e b 
+ 
  

@@ -37,7 +37,7 @@ export function HeroSection() {
         The address sits above the call to action, not beside it: it is
         reference material people come to copy, not a second thing to click.
       */}
-      <Reveal kind="settle" delay={600} className="mb-5 w-full max-w-[34rem]">
+      <Reveal kind="settle" delay={600} className="mb-5 w-full max-w-[38.5rem]">
         <ContractAddress />
       </Reveal>
 

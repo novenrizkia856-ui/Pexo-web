@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { PEXO_CONFIG, shortAddress } from "@/config/pexo.config";
+import { PEXO_CONFIG, explorerAddressUrl, shortAddress } from "@/config/pexo.config";
 import { landing } from "@/content/landing";
 
 /**
@@ -72,9 +72,12 @@ function useNarrow(query = "(max-width: 767px)") {
 export function ContractAddress() {
   const { ca } = landing;
   const address = PEXO_CONFIG.token.address;
+  // Verifying on the explorer is the first thing anyone does with a freshly
+  // published address, so it is one tap rather than a copy and a paste.
+  const explorerHref = address ? explorerAddressUrl(address) : null;
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
-  const addressRef = useRef<HTMLSpanElement | null>(null);
+  const addressRef = useRef<HTMLElement | null>(null);
   const narrow = useNarrow();
 
   useEffect(() => {
@@ -120,9 +123,20 @@ export function ContractAddress() {
 
       <span aria-hidden="true" className="h-5 w-px shrink-0 bg-line" />
 
-      {address ? (
+      {address && explorerHref ? (
+        <a
+          ref={addressRef as React.Ref<HTMLAnchorElement>}
+          href={explorerHref}
+          target="_blank"
+          rel="noreferrer"
+          className="num block min-w-0 flex-1 truncate text-sm underline-offset-4 hover:underline"
+          title={`${address} — open on the explorer`}
+        >
+          {narrow ? shortAddress(address) : address}
+        </a>
+      ) : address ? (
         <span
-          ref={addressRef}
+          ref={addressRef as React.Ref<HTMLSpanElement>}
           className="num min-w-0 flex-1 truncate text-sm"
           title={address}
         >
